@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <label for="titleInput">Title: </label>
+    <input type="text" id="titleInput" disabled value="<%= todo.title %>">
+  </div>
+  <div>
+    <label for="deadlineInput">Deadline: </label>
+    <input type="text" id="deadlineInput" disabled value="<%= todo.deadline %>">
+  </div>
+  <div>
+    <label for="descriptionInput">Description: </label>
+    <input type="text" id="descriptionInput" disabled value="<%= todo.description %>">
+  </div>
+  <div>
+    <label for="titleInput">状態: <%= todo.completed ? '完了' : '未完了' %></label>
+  </div>
+  <div>
+    <label for="titleInput">ID: <%= todo.id %></label>
+  </div>
+  <hr>
+  <button onclick="location.href='/todos/<%= todo.id %>/edit'">編集</button>
+  <button onclick="location.href='/todos/<%= todo.id %>?_method=DELETE'">削除</button>
+  <% if (todo.completed) { %>
+    <button onclick="location.href='/todos/<%= todo.id %>/completed?_method=DELETE'">未完了にする</button>
+  <% } else { %>
+    <button onclick="location.href='/todos/<%= todo.id %>/completed?_method=PUT'">完了にする</button>
+  <% } %>
+  <button onclick="location.href='/todos'">一覧</button>
+</body>
+</html>
