@@ -3,7 +3,7 @@
  * 出典: https://blog.katsubemakito.net/nodejs/mysql-sequelize1
  */
 const { Sequelize, DataTypes } = require('sequelize')
-const sequelize = new Sequelize('handson', 'user', 'passw0rd', {
+const sequelize = new Sequelize('todo_mysql_app', 'user', 'passw0rd', {
   host: 'mysql-db',
   dialect: 'mysql',
   logging: false
