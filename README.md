@@ -1,6 +1,7 @@
 # handson
 npm install -D sequelize-cli
 npx sequelize-cli init
+./config/config.jsonを編集
 npx sequelize-cli model:generate --name Todo --attributes title:string
 ./model/todo.jsを編集
   テーブルの項目設定
