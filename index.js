@@ -1,8 +1,9 @@
 'use strict'
-const { v4: uuidv4 } = require('uuid')
+// const { v4: uuidv4 } = require('uuid')
 const express = require('express')
 const methodOverride = require('method-override')
 const app = express()
+const models = require('./models')
 
 // サーバの待ち受けポート設定
 const port = process.env.PORT || 3000
@@ -24,15 +25,12 @@ app.get('/todos/new', (req, res) => {
 })
 // 登録
 app.post('/todos/create', (req, res) => {
-  const todo = {
-    id: uuidv4(),
-    title: req.body.title,
-    description: req.body.description,
-    deadline: req.body.deadline,
-    completed: false
-  }
-  todos.push(todo)
-  res.redirect('/todos')
+  const title = req.body.title
+  const description = req.body.description
+  const deadline = req.body.deadline
+  models.Todo.addTodo(title, description, deadline).then((id) => {
+    res.redirect('/todos')
+  })
 })
 // 削除
 app.delete('/todos/:id', (req, res) => {
@@ -70,12 +68,10 @@ app.delete('/todos/:id/completed', (req, res) => {
 })
 // 一覧画面
 app.get('/todos', (req, res) => {
-  if (!req.query.completed) {
-    return res.render('todos', { todos })
-  }
-  const completed = req.query.completed === 'true'
-  const data = todos.filter(todos => todos.completed === completed)
-  res.render('todos', { todos: data })
+  models.Todo.getTodoList().then(todoListWithCount => {
+    const todos = todoListWithCount.todoList
+    res.render('todos', { todos })
+  })
 })
 // 詳細画面
 app.get('/todos/:id', (req, res) => {

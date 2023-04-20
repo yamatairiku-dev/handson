@@ -76,6 +76,8 @@ app.get('/todos', (req, res) => {
   })
 })
 ```
+## 画面の見た目を変える
+
 ## 日付の書式を変更
 ./subroutine/formatter.jsを作成
 ```
