@@ -3,4 +3,4 @@ WORKDIR /home/node
 COPY . .
 ENV PORT 80
 RUN npm install
-ENTRYPOINT [ "node", "app.js" ]
+ENTRYPOINT [ "node", "index.js" ]

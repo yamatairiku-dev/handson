@@ -1,4 +1,31 @@
 # handson
+
+---
+# これまでやったこと
+## ハンズオンのベースプロジェクトのコピー
+```
+git clone https://github.com/yamatairiku-dev/todo-simple-app.git
+```
+## ベースプロジェクトの動作に必要なモジュールのインストール
+```
+npm install
+```
+## ORMであるSequelizeとmysqlのライブラリをインストール
+```
+npm i sequelize mysql2
+```
+## Sequelize CLIのインストール
+npm install -D sequelize-cli
+## Sequelizeの初期設定
+npx sequelize-cli init
+## データベース接続情報の設定
+./config/config.jsonを編集
+## Todoモデルの作成
+npx sequelize-cli model:generate --name Todo --attributes title:string
+## Todoモデルを編集
+./model/todo.jsにテーブルの属性を記述
+## データベースにTodoテーブルを登録
+./migrations/createTable.jsを作成、編集、実行 -> テーブルができていることを確認
 ## Todoモデルにデータベースへのインサート処理を記述
 ./model/todo.jsにデータベースへのインサート処理を記述
 ```
@@ -76,8 +103,6 @@ app.get('/todos', (req, res) => {
   })
 })
 ```
-## 画面の見た目を変える
-
 ## 日付の書式を変更
 ./subroutine/formatter.jsを作成
 ```
@@ -107,25 +132,12 @@ module.exports = {
   }
 }
 ```
-./model/todo.jsの「Todo一覧の取得」のforEachループに追記
-```
-todo.deadline = formatter.formatDate(todo.deadline)
-```
 ./model/todo.jsに外部モジュールを定義
 ```
 const { Model } = require('sequelize') // 改行を削除しただけ
 const formatter = require('../subroutine/formatter')
 ```
-# 前回やったこと
-## Sequelize CLIのインストール
-npm install -D sequelize-cli
-## Sequelizeの初期設定
-npx sequelize-cli init
-## データベース接続情報の設定
-./config/config.jsonを編集
-## Todoモデルの作成
-npx sequelize-cli model:generate --name Todo --attributes title:string
-## Todoモデルを編集
-* ./model/todo.jsにテーブルの属性を記述
-## データベースにTodoテーブルを登録
-./migrations/createTable.jsを作成、編集、実行 -> テーブルができていることを確認
+./model/todo.jsの「Todo一覧の取得」のforEachループに追記
+```
+todo.deadline = formatter.formatDate(todo.deadline)
+```
