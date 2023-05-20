@@ -45,6 +45,43 @@ module.exports = (sequelize, DataTypes) => {
       const todoListWithCount = { count, todoList }
       return todoListWithCount
     }
+
+    // Todoの取得
+    static async getTodo (id) {
+      const todoData = await this.findByPk(id, {
+        attributes: [
+          'id',
+          'title',
+          'completed',
+          'deadline',
+          'description'
+        ]
+      })
+      const todo = todoData.dataValues
+      todo.deadline = formatter.formatDate(todo.deadline)
+      return todo
+    }
+
+    // ToDoの削除
+    static async delTodo (id) {
+      const changes = await this.destroy(
+        {
+          where: { id }
+        }
+      )
+      return changes === 1 ? id : null // changes:削除できたレコード数
+    }
+
+    // ToDoの更新
+    static async modTodo (id, value) {
+      const changes = await this.update(
+        value,
+        {
+          where: { id }
+        }
+      )
+      return changes[0] === 1 ? id : null
+    }
   }
 
   Todo.init({
