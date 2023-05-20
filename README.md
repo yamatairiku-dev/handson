@@ -156,6 +156,15 @@ attributes: [
 todo.updatedAt = formatter.formatDate(todo.updatedAt) + ' ' + formatter.formatHourMin(todo.updatedAt)
 ```
 './views/todos.ejs'を編集しIDをボタン化して更新日時を追加
+## 他の画面の見た目を整える
+'show.ejs', 'new.ejs', 'edit.ejs', 'menu.ejs'を編集する
+## TopPageを index.ejs にする
+index.jsを編集する
+```
+// メニュー画面 => Top画面
+app.get('/', (req, res) => res.render('index'))
+```
+'https://github.com/yamatairiku-dev/todo-mysql-app/blob/main/views/index.ejs'をコピーする(画像含めて)
 
 ---
 # これまでやったこと

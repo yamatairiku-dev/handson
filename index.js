@@ -118,7 +118,7 @@ app.get('/api/todos', (req, res) => {
     res.json(todoListWithCount)
   })
 })
-// メニュー画面
-app.get('/', (req, res) => res.render('menu'))
+// メニュー画面 => Top画面
+app.get('/', (req, res) => res.render('index'))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
