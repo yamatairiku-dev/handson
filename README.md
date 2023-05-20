@@ -115,8 +115,8 @@ app.use(express.static('public'))
         <td> <%= todo.deadline %> </td>
         <td> <%= completedParams[0] %> </td>
         <td> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
-        <td> 
-          <button class="btn btn-outline-primary btn-sm" onclick="location.href='/todos/<%= todo.id %>/completed?_method=<%= completedParams[1] %>'"><%= completedParams[2] %></button> 
+        <td>
+          <button class="btn btn-outline-primary btn-sm" onclick="location.href='/todos/<%= todo.id %>/completed?_method=<%= completedParams[1] %>'"><%= completedParams[2] %></button>
           <button class="btn btn-outline-danger btn-sm" onclick="location.href='/todos/<%= todo.id %>?_method=DELETE'">削除</button>
           <button class="btn btn-outline-warning btn-sm" onclick="location.href='/todos/<%= todo.id %>/edit'">編集</button>
         </td>
@@ -156,12 +156,12 @@ attributes: [
 todo.updatedAt = formatter.formatDate(todo.updatedAt) + ' ' + formatter.formatHourMin(todo.updatedAt)
 ```
 './views/todos.ejs'を編集しIDを非表示にして更新日時を追加
-## Todo一覧画面の行を選択することで詳細表示画面へ遷移するようスクリプトを追加
+## Todo一覧画面の行を選択することで詳細表示画面へ遷移するようスクリプト（jQuery）を追加
 './views/todos.ejs'を編集
 ```
 <script>
   $("#todos-table tbody tr").on("click",function(){
-    var td_id = $(this).children().eq(5).text().trim();
+    const td_id = $(this).children().eq(5).text().trim();
     window.location.href = `/todos/${td_id}`
   })
 </script>

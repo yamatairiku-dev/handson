@@ -39,7 +39,7 @@
 
 <script>
   $("#todos-table tbody tr").on("click",function(){
-    var td_id = $(this).children().eq(5).text().trim();
+    const td_id = $(this).children().eq(5).text().trim();
     window.location.href = `/todos/${td_id}`
   })
 </script>
