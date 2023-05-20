@@ -1,27 +1,45 @@
-<table>
+<div class="text-center">
+  <h2>Todo一覧</h2>
+</div>
+
+<table class="table table-hover" id="todos-table">
   <thead>
     <tr>
-      <th>#</th>
-      <th>タイトル</th>
-      <th>期限</th>
-      <th>状態</th>
-      <th>ID</th>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Deadline</th>
+      <th scope="col">Completed</th>
+      <th scope="col">UpdatedAt</th>
+      <th scope="col">全<%= itemNum %>件</th>
     </tr>
   </thead>
   <tbody>
     <% todos.forEach(todo => { %>
+      <% const completedParams = todo.completed ? ['完了', 'DELETE', '完了取消'] : ['未完了', 'PUT', '完了'] %>
       <tr>
         <th> <%= todos.indexOf(todo) + 1 %> </th>
         <td> <%= todo.title %> </td>
         <td> <%= todo.deadline %> </td>
-        <td> <%= todo.completed ? "完了" : "未完了" %> </td>
-        <td> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
+        <td> <%= completedParams[0] %> </td>
+        <td> <%= todo.updatedAt %></td>
+        <td class="d-none"> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
+        <td>
+          <button class="btn btn-outline-primary btn-sm" onclick="location.href='/todos/<%= todo.id %>/completed?_method=<%= completedParams[1] %>'"><%= completedParams[2] %></button> 
+          <button class="btn btn-outline-danger btn-sm" onclick="location.href='/todos/<%= todo.id %>?_method=DELETE'">削除</button>
+          <button class="btn btn-outline-warning btn-sm" onclick="location.href='/todos/<%= todo.id %>/edit'">編集</button>
+        </td>
       </tr>
     <% }) %>
   </tbody>
 </table>
 <hr>
-<button onclick="location.href='/todos?completed=true'">完了一覧</button>
-<button onclick="location.href='/todos?completed=false'">未完了一覧</button>
-<button onclick="location.href='/todos'">一覧</button>
-<button onclick="location.href='/'">メニュー</button>
+<button class="btn btn-primary" onclick="location.href='/todos?completed=true'">完了一覧</button>
+<button class="btn btn-primary" onclick="location.href='/todos?completed=false'">未完了一覧</button>
+<button class="btn btn-primary" onclick="location.href='/todos'">全件</button>
+
+<script>
+  $("#todos-table tbody tr").on("click",function(){
+    var td_id = $(this).children().eq(5).text().trim();
+    window.location.href = `/todos/${td_id}`
+  })
+</script>

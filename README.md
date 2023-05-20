@@ -87,9 +87,85 @@ app.use(expressEjsLayouts)
 // expressの設定
 （省略）
 app.use(express.static('public'))
-
 ```
+## Todo一覧画面の見た目を整える
+./views/todos.ejsを編集
+```
+<div class="text-center">
+  <h2>Todo一覧</h2>
+</div>
 
+<table class="table table-hover" id="todos-table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Deadline</th>
+      <th scope="col">Completed</th>
+      <th scope="col">ID</th>
+      <th scope="col">全<%= itemNum %>件</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% todos.forEach(todo => { %>
+      <% const completedParams = todo.completed ? ['完了', 'DELETE', '完了取消'] : ['未完了', 'PUT', '完了'] %>
+      <tr>
+        <th> <%= todos.indexOf(todo) + 1 %> </th>
+        <td> <%= todo.title %> </td>
+        <td> <%= todo.deadline %> </td>
+        <td> <%= completedParams[0] %> </td>
+        <td> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
+        <td> 
+          <button class="btn btn-outline-primary btn-sm" onclick="location.href='/todos/<%= todo.id %>/completed?_method=<%= completedParams[1] %>'"><%= completedParams[2] %></button> 
+          <button class="btn btn-outline-danger btn-sm" onclick="location.href='/todos/<%= todo.id %>?_method=DELETE'">削除</button>
+          <button class="btn btn-outline-warning btn-sm" onclick="location.href='/todos/<%= todo.id %>/edit'">編集</button>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+<hr>
+<button class="btn btn-primary" onclick="location.href='/todos?completed=true'">完了一覧</button>
+<button class="btn btn-primary" onclick="location.href='/todos?completed=false'">未完了一覧</button>
+<button class="btn btn-primary" onclick="location.href='/todos'">全件</button>
+```
+一覧画面にレード件数を渡すようにindex.jsを編集する
+```
+// 一覧画面
+（省略）
+  models.Todo.getTodoList(whereClause).then(todoListWithCount => {
+    const todos = todoListWithCount.todoList
+    const itemNum = todoListWithCount.count // レコード件数
+    res.render('todos', { todos, itemNum }) // レコード件数を一覧画面に渡す
+  })
+（省略）
+```
+## Todo一覧画面からIDを削除して更新日時を追加
+更新日時を取得するように'./models/todo.js'の「Todo一覧の取得」処理に'updatedAt'属性を追加
+```
+attributes: [
+  'id',
+  'title',
+  'deadline',
+  'completed',
+  'updatedAt'
+]
+```
+更新日時のフォーマットを整形するために'./models/todo.js'の「Todo一覧の取得」処理のforEachループに処理追加
+```
+todo.updatedAt = formatter.formatDate(todo.updatedAt) + ' ' + formatter.formatHourMin(todo.updatedAt)
+```
+'./views/todos.ejs'を編集しIDを非表示にして更新日時を追加
+## Todo一覧画面の行を選択することで詳細表示画面へ遷移するようスクリプトを追加
+'./views/todos.ejs'を編集
+```
+<script>
+  $("#todos-table tbody tr").on("click",function(){
+    var td_id = $(this).children().eq(5).text().trim();
+    window.location.href = `/todos/${td_id}`
+  })
+</script>
+```
 ---
 # これまでやったこと
 ## ハンズオンのベースプロジェクトのコピー

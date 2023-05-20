@@ -101,7 +101,8 @@ app.get('/todos', (req, res) => {
   }
   models.Todo.getTodoList(whereClause).then(todoListWithCount => {
     const todos = todoListWithCount.todoList
-    res.render('todos', { todos })
+    const itemNum = todoListWithCount.count
+    res.render('todos', { todos, itemNum })
   })
 })
 // 詳細画面

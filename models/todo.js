@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
           'id',
           'title',
           'deadline',
-          'completed'
+          'completed',
+          'updatedAt'
         ],
         where: whereClause
       })
@@ -41,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       todos.rows.forEach(element => {
         const todo = element.dataValues
         todo.deadline = formatter.formatDate(todo.deadline)
+        todo.updatedAt = formatter.formatDate(todo.updatedAt) + ' ' + formatter.formatHourMin(todo.updatedAt)
         todoList.push(todo)
       })
       const todoListWithCount = { count, todoList }
