@@ -90,7 +90,16 @@ app.delete('/todos/:id/completed', (req, res) => {
 })
 // 一覧画面
 app.get('/todos', (req, res) => {
-  models.Todo.getTodoList().then(todoListWithCount => {
+  const completedQuery = req.query.completed
+  let whereClause = {}
+  if (completedQuery === 'true') {
+    whereClause = { completed: true }
+  } else if (completedQuery === 'false') {
+    whereClause = { completed: false }
+  } else {
+    whereClause = undefined
+  }
+  models.Todo.getTodoList(whereClause).then(todoListWithCount => {
     const todos = todoListWithCount.todoList
     res.render('todos', { todos })
   })
