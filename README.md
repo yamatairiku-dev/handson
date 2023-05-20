@@ -155,17 +155,8 @@ attributes: [
 ```
 todo.updatedAt = formatter.formatDate(todo.updatedAt) + ' ' + formatter.formatHourMin(todo.updatedAt)
 ```
-'./views/todos.ejs'を編集しIDを非表示にして更新日時を追加
-## Todo一覧画面の行を選択することで詳細表示画面へ遷移するようスクリプト（jQuery）を追加
-'./views/todos.ejs'を編集
-```
-<script>
-  $("#todos-table tbody tr").on("click",function(){
-    const td_id = $(this).children().eq(5).text().trim();
-    window.location.href = `/todos/${td_id}`
-  })
-</script>
-```
+'./views/todos.ejs'を編集しIDをボタン化して更新日時を追加
+
 ---
 # これまでやったこと
 ## ハンズオンのベースプロジェクトのコピー

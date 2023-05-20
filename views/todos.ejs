@@ -22,8 +22,8 @@
         <td> <%= todo.deadline %> </td>
         <td> <%= completedParams[0] %> </td>
         <td> <%= todo.updatedAt %></td>
-        <td class="d-none"> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
         <td>
+          <a class="btn btn-primary btn-sm" href="/todos/<%= todo.id %>">詳細</a>
           <button class="btn btn-outline-primary btn-sm" onclick="location.href='/todos/<%= todo.id %>/completed?_method=<%= completedParams[1] %>'"><%= completedParams[2] %></button> 
           <button class="btn btn-outline-danger btn-sm" onclick="location.href='/todos/<%= todo.id %>?_method=DELETE'">削除</button>
           <button class="btn btn-outline-warning btn-sm" onclick="location.href='/todos/<%= todo.id %>/edit'">編集</button>
@@ -37,9 +37,3 @@
 <button class="btn btn-primary" onclick="location.href='/todos?completed=false'">未完了一覧</button>
 <button class="btn btn-primary" onclick="location.href='/todos'">全件</button>
 
-<script>
-  $("#todos-table tbody tr").on("click",function(){
-    const td_id = $(this).children().eq(5).text().trim();
-    window.location.href = `/todos/${td_id}`
-  })
-</script>
