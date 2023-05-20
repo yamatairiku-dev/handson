@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Todoアプリだぜ!</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/todos?completed=&order_by=updated_desc">Todo一覧</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/todos/new">Todoの登録</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">カテゴリー</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/categories">一覧</a></li>
+            <li><a class="dropdown-item" href="/categories/new">新規登録</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">ユーザー</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/users">一覧</a></li>
+            <li><a class="dropdown-item" href="/users/new">新規登録</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">ヘルプ</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" target=”_blank” href="http://localhost:8080">データベース</a></li>
+            <li><a class="dropdown-item" target=”_blank” href="https://getbootstrap.jp/docs/5.0/getting-started/introduction/">Bootstrap</a></li>
+            <li><a class="dropdown-item" target=”_blank” href="https://blog.capilano-fw.com/?p=5582">Sequelize</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

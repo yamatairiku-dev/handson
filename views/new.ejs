@@ -1,28 +1,17 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <form action="/todos/create" method="POST">
-    <div>
-      <label for="titleInput">タイトル</label>
-      <input type="text" name="title" id="titleInput" placeholder="タイトル" required autofocus>
-    </div>
-    <div>
-      <label for="contentsInput">内容説明</label>
-      <textarea name="description" id="contentsInput" placeholder="内容" rows="3"></textarea>
-    </div>
-    <div>
-      <label for="deadlineInput">期限</label>
-      <input type="date" name="deadline" id="deadlineInput" required></textarea>
-    </div>
-    <hr>
-    <button type="submit">ToDo登録</button>
-  </form>
-  <button onclick="location.href='/'">メニュー</button>
-</body>
-</html>
+<form action="/todos/create" method="POST">
+  <div>
+    <label for="titleInput">タイトル</label>
+    <input type="text" name="title" id="titleInput" placeholder="タイトル" required autofocus>
+  </div>
+  <div>
+    <label for="contentsInput">内容説明</label>
+    <textarea name="description" id="contentsInput" placeholder="内容" rows="3"></textarea>
+  </div>
+  <div>
+    <label for="deadlineInput">期限</label>
+    <input type="date" name="deadline" id="deadlineInput" required></textarea>
+  </div>
+  <hr>
+  <button type="submit">ToDo登録</button>
+</form>
+<button onclick="location.href='/'">メニュー</button>

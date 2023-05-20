@@ -1,4 +1,236 @@
 # handson
+## ページのレイアウトを作る
+ページのレイアウトを作ることができるミドルウェア'express-ejs-layouts'の導入
+```
+npm i express-ejs-layouts
+```
+index.jsに'express-ejs-layouts'を定義
+```
+const expressEjsLayouts = require('express-ejs-layouts')
+```
+index.jsに'express'の設定を定義
+```
+// expressの設定
+（省略）
+app.use(expressEjsLayouts)
+```
+すべての画面に適用されるベースレイアウトとして'./views/layout.ejs'を作成
+```
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <title>ToDo管理アプリ</title>
+</head>
+<body>
+  <%- include('./partials/top.ejs') %>
+  <div class="container">
+    <%- body %>
+  </div>
+  <script src="/js/bootstrap.bundle.js"></script>
+</body>
+</html>
+```
+画面の上部に表示されるメニューバー'./views/partials/top.ejs'を作成
+```
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Todoアプリだぜ!</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/todos?completed=&order_by=updated_desc">Todo一覧</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/todos/new">Todoの登録</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">カテゴリー</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/categories">一覧</a></li>
+            <li><a class="dropdown-item" href="/categories/new">新規登録</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">ユーザー</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/users">一覧</a></li>
+            <li><a class="dropdown-item" href="/users/new">新規登録</a></li>
+            <li><hr class="dropdown-divider"></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">ヘルプ</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" target=”_blank” href="http://localhost:8080">データベース</a></li>
+            <li><a class="dropdown-item" target=”_blank” href="https://getbootstrap.jp/docs/5.0/getting-started/introduction/">Bootstrap</a></li>
+            <li><a class="dropdown-item" target=”_blank” href="https://blog.capilano-fw.com/?p=5582">Sequelize</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+```
+今まで作った画面（menu.ejs, todos.ejs, show.ejs, new.ejs, edit.ejs）をbody要素だけに編集する
+## Bootstrap(CSSフレームワーク)を導入する
+'./public/css/bootstrap.css', './public/css/bootstrap.css.map', 'bootstrap.bundle.js', 'bootstrap.bundle.js.map'をコピー
+## expressに静的ファイルの供給フォルダーを設定
+```
+// expressの設定
+（省略）
+app.use(express.static('public'))
+
+```
+
+---
+# これまでやったこと
+## ハンズオンのベースプロジェクトのコピー
+```
+git clone https://github.com/yamatairiku-dev/todo-simple-app.git
+```
+## ベースプロジェクトの動作に必要なモジュールのインストール
+```
+npm install
+```
+## ORMであるSequelizeとmysqlのライブラリをインストール
+```
+npm i sequelize mysql2
+```
+## Sequelize CLIのインストール
+npm install -D sequelize-cli
+## Sequelizeの初期設定
+npx sequelize-cli init
+## データベース接続情報の設定
+./config/config.jsonを編集
+## Todoモデルの作成
+npx sequelize-cli model:generate --name Todo --attributes title:string
+## Todoモデルを編集
+./model/todo.jsにテーブルの属性を記述
+## データベースにTodoテーブルを登録
+./migrations/createTable.jsを作成、編集、実行 -> テーブルができていることを確認
+## Todoモデルにデータベースへのインサート処理を記述
+./model/todo.jsにデータベースへのインサート処理を記述
+```
+// Todoの登録
+static async addTodo (title, description, deadline) {
+  const todo = await this.create({
+    title,
+    description,
+    deadline
+  })
+  console.log(todo) // todoの中身を確認
+  return todo.dataValues.id
+}
+```
+## サーバプログラムにDBへの登録処理を記述
+index.jsを編集
+```
+// const { v4: uuidv4 } = require('uuid')
+const models = require('./models')
+```
+```
+// 登録
+app.post('/todos/create', (req, res) => {
+  const title = req.body.title
+  const description = req.body.description
+  const deadline = req.body.deadline
+  models.Todo.addTodo(title, description, deadline).then((id) => {
+    res.redirect('/todos')
+  })
+})
+```
+## nodemonの導入
+```
+npm install -D nodemon
+```
+package.jsonを編集
+```
+"scripts": {
+  "dev": "nodemon index.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+},
+```
+## Todoモデルにデータベースからの一覧取得処理を記述
+./model/todo.jsを編集
+```
+// Todo一覧の取得
+static async getTodoList () {
+  const todos = await this.findAndCountAll({
+    attributes: [
+      'id',
+      'title',
+      'deadline',
+      'completed'
+    ]
+  })
+  console.dir(todos, { depth: null }) // todosの中身を確認
+  const count = todos.count
+  const todoList = []
+  todos.rows.forEach(element => {
+    const todo = element.dataValues
+    todoList.push(todo)
+  })
+  const todoListWithCount = { count, todoList }
+  return todoListWithCount
+}
+```
+## サーバプログラムにDBから一覧取得処理を記述
+index.jsを編集
+```
+// 一覧画面
+app.get('/todos', (req, res) => {
+  models.Todo.getTodoList().then(todoListWithCount => {
+    const todos = todoListWithCount.todoList
+    res.render('todos', { todos })
+  })
+})
+```
+## 日付の書式を変更
+./subroutine/formatter.jsを作成
+```
+'use strict'
+
+module.exports = {
+  // Dateフォーマット
+  formatDate: (date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    let monthStr = '0' + month
+    monthStr = monthStr.slice(-2)
+    const day = date.getDate()
+    let dayStr = '0' + day
+    dayStr = dayStr.slice(-2)
+    return `${year}-${monthStr}-${dayStr}`
+  },
+  // 時分フォーマット
+  formatHourMin: (date) => {
+    const hour = date.getHours()
+    let hourStr = '0' + hour
+    hourStr = hourStr.slice(-2)
+    const min = date.getMinutes()
+    let minStr = '0' + min
+    minStr = minStr.slice(-2)
+    return `${hourStr}:${minStr}`
+  }
+}
+```
+./model/todo.jsに外部モジュールを定義
+```
+const { Model } = require('sequelize') // 改行を削除しただけ
+const formatter = require('../subroutine/formatter')
+```
+./model/todo.jsの「Todo一覧の取得」のforEachループに追記
+```
+todo.deadline = formatter.formatDate(todo.deadline)
+```
 ## Todoモデルにデータベースからの一件取得処理を記述
 ./model/todo.jsを編集
 ```
@@ -143,146 +375,4 @@ index.jsを編集
 ```
 // 初期データ
 // const todos = require('./initData.json')
-```
-
----
-# これまでやったこと
-## ハンズオンのベースプロジェクトのコピー
-```
-git clone https://github.com/yamatairiku-dev/todo-simple-app.git
-```
-## ベースプロジェクトの動作に必要なモジュールのインストール
-```
-npm install
-```
-## ORMであるSequelizeとmysqlのライブラリをインストール
-```
-npm i sequelize mysql2
-```
-## Sequelize CLIのインストール
-npm install -D sequelize-cli
-## Sequelizeの初期設定
-npx sequelize-cli init
-## データベース接続情報の設定
-./config/config.jsonを編集
-## Todoモデルの作成
-npx sequelize-cli model:generate --name Todo --attributes title:string
-## Todoモデルを編集
-./model/todo.jsにテーブルの属性を記述
-## データベースにTodoテーブルを登録
-./migrations/createTable.jsを作成、編集、実行 -> テーブルができていることを確認
-## Todoモデルにデータベースへのインサート処理を記述
-./model/todo.jsにデータベースへのインサート処理を記述
-```
-// Todoの登録
-static async addTodo (title, description, deadline) {
-  const todo = await this.create({
-    title,
-    description,
-    deadline
-  })
-  console.log(todo) // todoの中身を確認
-  return todo.dataValues.id
-}
-```
-## サーバプログラムにDBへの登録処理を記述
-index.jsを編集
-```
-// const { v4: uuidv4 } = require('uuid')
-const models = require('./models')
-```
-```
-// 登録
-app.post('/todos/create', (req, res) => {
-  const title = req.body.title
-  const description = req.body.description
-  const deadline = req.body.deadline
-  models.Todo.addTodo(title, description, deadline).then((id) => {
-    res.redirect('/todos')
-  })
-})
-```
-## nodemonの導入
-```
-npm install -D nodemon
-```
-package.jsonを編集
-```
-"scripts": {
-  "dev": "nodemon index.js",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
-```
-## Todoモデルにデータベースからの一覧取得処理を記述
-./model/todo.jsを編集
-```
-// Todo一覧の取得
-static async getTodoList () {
-  const todos = await this.findAndCountAll({
-    attributes: [
-      'id',
-      'title',
-      'deadline',
-      'completed'
-    ]
-  })
-  console.dir(todos, { depth: null }) // todosの中身を確認
-  const count = todos.count
-  const todoList = []
-  todos.rows.forEach(element => {
-    const todo = element.dataValues
-    todoList.push(todo)
-  })
-  const todoListWithCount = { count, todoList }
-  return todoListWithCount
-}
-```
-## サーバプログラムにDBから一覧取得処理を記述
-index.jsを編集
-```
-// 一覧画面
-app.get('/todos', (req, res) => {
-  models.Todo.getTodoList().then(todoListWithCount => {
-    const todos = todoListWithCount.todoList
-    res.render('todos', { todos })
-  })
-})
-```
-## 日付の書式を変更
-./subroutine/formatter.jsを作成
-```
-'use strict'
-
-module.exports = {
-  // Dateフォーマット
-  formatDate: (date) => {
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1
-    let monthStr = '0' + month
-    monthStr = monthStr.slice(-2)
-    const day = date.getDate()
-    let dayStr = '0' + day
-    dayStr = dayStr.slice(-2)
-    return `${year}-${monthStr}-${dayStr}`
-  },
-  // 時分フォーマット
-  formatHourMin: (date) => {
-    const hour = date.getHours()
-    let hourStr = '0' + hour
-    hourStr = hourStr.slice(-2)
-    const min = date.getMinutes()
-    let minStr = '0' + min
-    minStr = minStr.slice(-2)
-    return `${hourStr}:${minStr}`
-  }
-}
-```
-./model/todo.jsに外部モジュールを定義
-```
-const { Model } = require('sequelize') // 改行を削除しただけ
-const formatter = require('../subroutine/formatter')
-```
-./model/todo.jsの「Todo一覧の取得」のforEachループに追記
-```
-todo.deadline = formatter.formatDate(todo.deadline)
 ```

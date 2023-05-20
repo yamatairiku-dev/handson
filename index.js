@@ -4,6 +4,7 @@ const express = require('express')
 const methodOverride = require('method-override')
 const app = express()
 const models = require('./models')
+const expressEjsLayouts = require('express-ejs-layouts')
 
 // サーバの待ち受けポート設定
 const port = process.env.PORT || 3000
@@ -15,6 +16,8 @@ app.use(express.json())
 app.use(methodOverride('_method', {
   methods: ['POST', 'GET']
 }))
+app.use(expressEjsLayouts)
+app.use(express.static('public'))
 
 // 初期データ
 // const todos = require('./initData.json')

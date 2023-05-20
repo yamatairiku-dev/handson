@@ -1,38 +1,27 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>todos</title>
-</head>
-<body>
-  <table>
-    <thead>
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>タイトル</th>
+      <th>期限</th>
+      <th>状態</th>
+      <th>ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% todos.forEach(todo => { %>
       <tr>
-        <th>#</th>
-        <th>タイトル</th>
-        <th>期限</th>
-        <th>状態</th>
-        <th>ID</th>
+        <th> <%= todos.indexOf(todo) + 1 %> </th>
+        <td> <%= todo.title %> </td>
+        <td> <%= todo.deadline %> </td>
+        <td> <%= todo.completed ? "完了" : "未完了" %> </td>
+        <td> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
       </tr>
-    </thead>
-    <tbody>
-      <% todos.forEach(todo => { %>
-        <tr>
-          <th> <%= todos.indexOf(todo) + 1 %> </th>
-          <td> <%= todo.title %> </td>
-          <td> <%= todo.deadline %> </td>
-          <td> <%= todo.completed ? "完了" : "未完了" %> </td>
-          <td> <a href="/todos/<%= todo.id %>"><%= todo.id %></a> </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-  <hr>
-  <button onclick="location.href='/todos?completed=true'">完了一覧</button>
-  <button onclick="location.href='/todos?completed=false'">未完了一覧</button>
-  <button onclick="location.href='/todos'">一覧</button>
-  <button onclick="location.href='/'">メニュー</button>
-</body>
-</html>
+    <% }) %>
+  </tbody>
+</table>
+<hr>
+<button onclick="location.href='/todos?completed=true'">完了一覧</button>
+<button onclick="location.href='/todos?completed=false'">未完了一覧</button>
+<button onclick="location.href='/todos'">一覧</button>
+<button onclick="location.href='/'">メニュー</button>
