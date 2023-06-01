@@ -34,23 +34,34 @@ app.post('/todos/create', (req, res) => {
 })
 // 削除
 app.delete('/todos/:id', (req, res) => {
-  const i = todos.findIndex(todo => todo.id === req.params.id)
-  todos.splice(i, 1)
-  res.redirect('/todos')
+  const id = req.params.id
+  models.Todo.delTodo(id).then(id => {
+    if (!id) {
+      console.log('削除失敗！')
+    }
+    res.redirect('/todos')
+  })
 })
 // 編集画面
 app.get('/todos/:id/edit', (req, res) => {
-  const data = todos.filter(todo => todo.id === req.params.id)
-  res.render('edit', { todo: data[0] })
+  const id = req.params.id
+  models.Todo.getTodo(id).then(todo => {
+    res.render('edit', { todo })
+  })
 })
 // 更新
 app.put('/todos/:id', (req, res) => {
   const id = req.params.id
-  const i = todos.findIndex(todo => todo.id === id)
-  todos[i].title = req.body.title
-  todos[i].deadline = req.body.deadline
-  todos[i].description = req.body.description
-  res.redirect(`/todos/${id}`)
+  const title = req.body.title
+  const deadline = req.body.deadline
+  const description = req.body.description
+  const value = { title, deadline, description }
+  models.Todo.modTodo(id, value).then(id => {
+    if (!id) {
+      console.log('更新失敗！')
+    }
+    res.redirect(`/todos/${id}`)
+  })
 })
 // 完了登録
 app.put('/todos/:id/completed', (req, res) => {
@@ -75,8 +86,10 @@ app.get('/todos', (req, res) => {
 })
 // 詳細画面
 app.get('/todos/:id', (req, res) => {
-  const i = todos.findIndex(todo => todo.id === req.params.id)
-  res.render('show', { todo: todos[i] })
+  const id = req.params.id
+  models.Todo.getTodo(id).then(todo => {
+    res.render('show', { todo })
+  })
 })
 // apiデータ
 app.get('/api/todos', (req, res) => res.json(todos))

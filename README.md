@@ -1,5 +1,96 @@
 # handson
 
+## サーバプログラムに一件完了登録処理を記述
+index.jsを編集
+```
+// 完了登録
+app.put('/todos/:id/completed', (req, res) => {
+  const id = req.params.id
+  const value = { completed: true }
+  models.Todo.modTodo(id, value).then(id => {
+    if (!id) {
+      console.log('更新失敗！')
+    }
+    res.redirect(`/todos/${id}`)
+  })
+})
+```
+## サーバプログラムに一件未完了登録処理を記述
+index.jsを編集
+```
+// 未完了登録
+app.delete('/todos/:id/completed', (req, res) => {
+  const id = req.params.id
+  const value = { completed: false }
+  models.Todo.modTodo(id, value).then(id => {
+    if (!id) {
+      console.log('更新失敗！')
+    }
+    res.redirect(`/todos/${id}`)
+  })
+})
+```
+## サーバプログラムにTodo一覧API処理を記述
+index.jsを編集
+```
+// apiデータ
+app.get('/api/todos', (req, res) => {
+  models.Todo.getTodoList().then(todoListWithCount => {
+    res.json(todoListWithCount)
+  })
+})
+```
+## サーバプログラムから初期データの読み込みを削除
+index.jsを編集
+```
+// 初期データ
+// const todos = require('./initData.json')
+```
+## Todo一覧表示に完了一覧と未完了一覧の表示機能を追加
+index.jsを編集
+```
+// 一覧画面
+app.get('/todos', (req, res) => {
+  const completedQuery = req.query.completed
+  let whereClause = {}
+  if (completedQuery === 'true') {
+    whereClause = { completed: true }
+  } else if (completedQuery === 'false') {
+    whereClause = { completed: false }
+  } else {
+    whereClause = undefined
+  }
+  models.Todo.getTodoList(whereClause).then(todoListWithCount => {
+    const todos = todoListWithCount.todoList
+    res.render('todos', { todos })
+  })
+})
+```
+./model/todo.jsを編集
+```
+// Todo一覧の取得
+static async getTodoList (whereClause) {
+  const todos = await this.findAndCountAll({
+    attributes: [
+      'id',
+      'title',
+      'deadline',
+      'completed'
+    ],
+    where: whereClause // where句を設定
+  })
+  console.dir(todos, { depth: null }) // todosの中身を確認
+  const count = todos.count
+  const todoList = []
+  todos.rows.forEach(element => {
+    const todo = element.dataValues
+    todo.deadline = formatter.formatDate(todo.deadline)
+    todoList.push(todo)
+  })
+  const todoListWithCount = { count, todoList }
+  return todoListWithCount
+}
+```
 ---
 # これまでやったこと
 ## ハンズオンのベースプロジェクトのコピー
@@ -59,7 +150,7 @@ app.post('/todos/create', (req, res) => {
 ```
 ## nodemonの導入
 ```
-npm install nodemon
+npm install -D nodemon
 ```
 package.jsonを編集
 ```
@@ -140,4 +231,104 @@ const formatter = require('../subroutine/formatter')
 ./model/todo.jsの「Todo一覧の取得」のforEachループに追記
 ```
 todo.deadline = formatter.formatDate(todo.deadline)
+```
+## Todoモデルにデータベースからの一件取得処理を記述
+./model/todo.jsを編集
+```
+// Todoの取得
+static async getTodo (id) {
+  const todoData = await this.findByPk(id, {
+    attributes: [
+      'id',
+      'title',
+      'completed',
+      'deadline',
+      'description'
+    ]
+  })
+  const todo = todoData.dataValues
+  todo.deadline = formatter.formatDate(todo.deadline)
+  return todo
+}
+```
+## サーバプログラムに一件取得処理を記述
+index.jsを編集
+```
+// 詳細画面
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  models.Todo.getTodo(id).then(todo => {
+    res.render('show', { todo })
+  })
+})
+```
+## Todoモデルにデータベースからの一件削除処理を記述
+./model/todo.jsを編集
+```
+// ToDoの削除
+static async delTodo (id) {
+  const changes = await this.destroy(
+    {
+      where: { id }
+    }
+  )
+  return changes === 1 ? id : null // changes:削除できたレコード数
+}
+```
+## サーバプログラムに一件削除処理を記述
+index.jsを編集
+```
+// 削除
+app.delete('/todos/:id', (req, res) => {
+  const id = req.params.id
+  models.Todo.delTodo(id).then(id => {
+    if (!id) {
+      console.log('削除失敗！')
+    }
+    res.redirect('/todos')
+  })
+})
+```
+## サーバプログラムに編集画面表示処理を記述
+index.jsを編集
+```
+// 編集画面
+app.get('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  models.Todo.getTodo(id).then(todo => {
+    res.render('edit', { todo })
+  })
+})
+```
+## Todoモデルにデータベースへの一件更新処理を記述
+./model/todo.jsを編集
+```
+// ToDoの更新
+static async modTodo (id, value) {
+  const changes = await this.update(
+    value,
+    {
+      where: { id }
+    }
+  )
+  return changes[0] === 1 ? id : null
+}
+```
+## サーバプログラムに一件更新処理を記述
+index.jsを編集
+```
+// 更新
+app.put('/todos/:id', (req, res) => {
+  const id = req.params.id
+  const title = req.body.title
+  const deadline = req.body.deadline
+  const description = req.body.description
+  const value = { title, deadline, description }
+  models.Todo.modTodo(id, value).then(id => {
+    if (!id) {
+      console.log('更新失敗！')
+    }
+    res.redirect(`/todos/${id}`)
+  })
+})
 ```
