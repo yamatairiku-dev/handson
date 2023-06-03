@@ -58,7 +58,7 @@ app.get('/todos', (req, res) => {
   } else if (completedQuery === 'false') {
     whereClause = { completed: false }
   } else {
-    whereClause = undefined
+    whereClause = {}
   }
   models.Todo.getTodoList(whereClause).then(todoListWithCount => {
     const todos = todoListWithCount.todoList
