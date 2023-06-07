@@ -16,9 +16,6 @@ app.use(methodOverride('_method', {
   methods: ['POST', 'GET']
 }))
 
-// 初期データ
-const todos = require('./initData.json')
-
 // 新規登録画面
 app.get('/todos/new', (req, res) => {
   res.render('new')
@@ -66,20 +63,35 @@ app.put('/todos/:id', (req, res) => {
 // 完了登録
 app.put('/todos/:id/completed', (req, res) => {
   const id = req.params.id
-  const i = todos.findIndex(todo => todo.id === id)
-  todos[i].completed = true
-  res.redirect(`/todos/${id}`)
+  const value = { completed: true }
+  models.Todo.modTodo(id, value).then(id => {
+    if (!id) {
+      console.log('更新失敗！')
+    }
+    res.redirect(`/todos/${id}`)
+  })
 })
 // 未完了登録
 app.delete('/todos/:id/completed', (req, res) => {
   const id = req.params.id
-  const i = todos.findIndex(todo => todo.id === id)
-  todos[i].completed = false
-  res.redirect(`/todos/${id}`)
+  const value = { completed: false }
+  models.Todo.modTodo(id, value).then(id => {
+    if (!id) {
+      console.log('更新失敗！')
+    }
+    res.redirect(`/todos/${id}`)
+  })
 })
 // 一覧画面
 app.get('/todos', (req, res) => {
-  models.Todo.getTodoList().then(todoListWithCount => {
+  const completedQuery = req.query.completed
+  let whereClause = {}
+  if (completedQuery === 'true') {
+    whereClause = { completed: true }
+  } else if (completedQuery === 'false') {
+    whereClause = { completed: false }
+  }
+  models.Todo.getTodoList(whereClause).then(todoListWithCount => {
     const todos = todoListWithCount.todoList
     res.render('todos', { todos })
   })
@@ -91,8 +103,11 @@ app.get('/todos/:id', (req, res) => {
     res.render('show', { todo })
   })
 })
-// apiデータ
-app.get('/api/todos', (req, res) => res.json(todos))
+app.get('/api/todos', (req, res) => {
+  models.Todo.getTodoList().then(todoListWithCount => {
+    res.json(todoListWithCount)
+  })
+})
 // メニュー画面
 app.get('/', (req, res) => res.render('menu'))
 

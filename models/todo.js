@@ -25,14 +25,15 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     // Todo一覧の取得
-    static async getTodoList () {
+    static async getTodoList (whereClause) {
       const todos = await this.findAndCountAll({
         attributes: [
           'id',
           'title',
           'deadline',
           'completed'
-        ]
+        ],
+        where: whereClause // where句を設定
       })
       console.dir(todos, { depth: null }) // todosの中身を確認
       const count = todos.count
